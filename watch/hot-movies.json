@@ -1,0 +1,37 @@
+{
+ "name": "今日热门电影",
+ "cover": "https://emos.dpdns.org/img/docusaurus-social-card.jpg",
+ "updated_at": "2026-11-18 16:46:32",
+ "videos": [
+  {
+   "tmdb_id": 872585,
+   "tmdb_type": "movie",
+   "title": "奥本海默",
+   "sort": 1
+  },
+  {
+   "tmdb_id": 693134,
+   "tmdb_type": "movie",
+   "title": "沙丘2",
+   "sort": 2
+  },
+  {
+   "tmdb_id": 278,
+   "tmdb_type": "movie",
+   "title": "肖申克的救赎",
+   "sort": 3
+  },
+  {
+   "tmdb_id": 155,
+   "tmdb_type": "movie",
+   "title": "蝙蝠侠：黑暗骑士",
+   "sort": 4
+  },
+  {
+   "tmdb_id": 299534,
+   "tmdb_type": "movie",
+   "title": "复仇者联盟4",
+   "sort": 5
+  }
+ ]
+}
