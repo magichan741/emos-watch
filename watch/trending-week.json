@@ -1,0 +1,37 @@
+{
+ "name": "本周趋势",
+ "cover": "https://emos.dpdns.org/img/docusaurus-social-card.jpg",
+ "updated_at": "2026-11-18 16:46:41",
+ "videos": [
+  {
+   "tmdb_id": 872585,
+   "tmdb_type": "movie",
+   "title": "奥本海默",
+   "sort": 1
+  },
+  {
+   "tmdb_id": 66732,
+   "tmdb_type": "tv",
+   "title": "怪奇物语",
+   "sort": 2
+  },
+  {
+   "tmdb_id": 94997,
+   "tmdb_type": "tv",
+   "title": "龙之家族",
+   "sort": 3
+  },
+  {
+   "tmdb_id": 299534,
+   "tmdb_type": "movie",
+   "title": "复仇者联盟4",
+   "sort": 4
+  },
+  {
+   "tmdb_id": 1396,
+   "tmdb_type": "tv",
+   "title": "绝命毒师",
+   "sort": 5
+  }
+ ]
+}
