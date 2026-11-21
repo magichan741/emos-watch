@@ -22,18 +22,25 @@ LANG = os.environ.get("TMDB_LANG", "zh-CN")
 IMG = "https://image.tmdb.org/t/p/w500"
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "watch")
 
-# slug: (片单标题, 数据源, 只取 movie/tv 类型?)
+# slug: (片单标题, 数据源, 只取 movie/tv 类型?, 条数, 额外查询参数)
 FEEDS = {
-    "hot-movies": ("今日热门电影", "/movie/popular", "movie"),
-    "hot-tv": ("今日热门剧集", "/tv/popular", "tv"),
-    "trending-week": ("本周趋势", "/trending/all/week", None),
-    "top-rated": ("高分电影 Top250", "/movie/top_rated", "movie"),
+    "hot-movies": ("今日热门电影", "/movie/popular", "movie", 20, {}),
+    "hot-tv": ("今日热门剧集", "/tv/popular", "tv", 20, {}),
+    "trending-week": ("本周趋势", "/trending/all/week", None, 20, {}),
+    "top-rated": ("高分电影 Top250", "/movie/top_rated", "movie", 20, {}),
+    # 最新国漫 TOP50：中国大陆出品、按首播日期倒序
+    "guoman-top50": ("最新国漫TOP50", "/discover/tv", "tv", 50,
+                     {"with_origin_country": "CN", "sort_by": "first_air_date.desc",
+                      "vote_count.gte": "0"}),
 }
-LIMIT = 20  # emos 的 sort 范围 1-100，这里取前 20 条
+LIMIT = 20  # 默认条数；emos 的 sort 范围 1-100
 
 
-def api(path, page=1):
-    q = urllib.parse.urlencode({"api_key": TMDB_KEY, "language": LANG, "page": page})
+def api(path, page=1, extra=None):
+    params = {"api_key": TMDB_KEY, "language": LANG, "page": page}
+    if extra:
+        params.update(extra)
+    q = urllib.parse.urlencode(params)
     url = f"https://api.themoviedb.org/3{path}?{q}"
     with urllib.request.urlopen(url, timeout=30) as r:
         return json.loads(r.read().decode())
@@ -43,9 +50,16 @@ def beijing_now():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(time.time() + 8 * 3600))
 
 
-def build(slug, title, path, forced_type):
-    data = api(path)
-    items = data.get("results", [])
+def build(slug, title, path, forced_type, limit=LIMIT, extra=None):
+    items = []
+    page = 1
+    while len(items) < limit and page <= 5:
+        data = api(path, page, extra)
+        items.extend(data.get("results", []))
+        if page >= int(data.get("total_pages") or 1):
+            break
+        page += 1
+
     videos = []
     cover = None
     for it in items:
@@ -62,7 +76,7 @@ def build(slug, title, path, forced_type):
             "title": (it.get("title") or it.get("name") or "").strip() or "未命名",
             "sort": len(videos) + 1,
         })
-        if len(videos) >= LIMIT:
+        if len(videos) >= limit:
             break
 
     payload = {
@@ -82,9 +96,9 @@ def main():
     if not TMDB_KEY:
         print("跳过：未设置 TMDB_KEY")
         return 1
-    for slug, (title, path, forced) in FEEDS.items():
+    for slug, (title, path, forced, limit, extra) in FEEDS.items():
         try:
-            build(slug, title, path, forced)
+            build(slug, title, path, forced, limit, extra)
         except Exception as e:
             print(f"{slug} 失败：{e}")
     return 0
